@@ -1,5 +1,5 @@
 #include <print>
-#include "tableturf.h"
+#include "tableturf.hpp"
 
 int main(int argc, char** argv) {
     std::println("Hello, server!");
