@@ -1,5 +1,4 @@
-#include "tableturf.hpp"
-#include <vector>
+#include "board.hpp"
 #include <stdexcept>
 
 #define BOOST_TEST_MODULE board_layouts
@@ -8,36 +7,38 @@
 
 BOOST_AUTO_TEST_CASE(test) {
     // Valid boards
-    std::pair<int, int> p1_start = {0, 0};
-    std::pair<int, int> p2_start = {1, 1};
-    std::vector<std::pair<int, int>> coords = { {0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    BoardState state = {
+        {{0, 0}, Tile { .owner = PLAYER_P1, .is_special = true }},
+        {{0, 1}, std::nullopt },
+        {{1, 0}, std::nullopt },
+        {{1, 1}, Tile { .owner = PLAYER_P2, .is_special = true }},
+    };
 
-    BoardLayout b1(coords, p1_start, p2_start);
+    Board b1("Four Square", state);
 
-    BOOST_TEST(b1.tiles.contains({0, 0}), "board doesnt contain correct coordinates");
-    BOOST_TEST(b1.tiles.contains({1, 1}), "board doesnt contain correct coordinates");
+    BOOST_TEST(b1.getBoardState().contains({0, 0}), "board doesnt contain correct coordinates");
+    BOOST_TEST(b1.getBoardState().contains({1, 1}), "board doesnt contain correct coordinates");
 
-    BOOST_TEST(p1_start.first == b1.p1_start.first); BOOST_TEST(p1_start.second == b1.p1_start.second);
-    BOOST_TEST(p2_start.first == b1.p2_start.first); BOOST_TEST(p2_start.second == b1.p2_start.second);
+    std::optional<Tile> p1_tile = b1.getBoardState().at({0, 0});
+
+    BOOST_TEST(p1_tile.has_value());
+    BOOST_TEST(p1_tile.value().owner == PLAYER_P1);
+    BOOST_TEST(p1_tile.value().is_special);
     
     // Invalid boards
-    // the e stands for evil
     try {
         // empty board layout
-        BoardLayout eb1(std::vector<std::pair<int, int>>({}), p1_start, p2_start);
+        Board eb("Empty", BoardState{});
         BOOST_TEST(false, "constructor accepted empty board layout");
     } catch (std::runtime_error& e) {}
 
     try {
-        // start square not on the board
-        BoardLayout eb1(coords, {7, 27}, p2_start);
-        BOOST_TEST(false, "constructor accepted board layout with invalid start square");
-    } catch (std::runtime_error& e) {}
-
-    try {
-        // p1 and p2 start are the same
-        BoardLayout eb1(coords, p2_start, p2_start);
-        BOOST_TEST(false, "constructor accepted board where both players start on the same square");
+        // only p1 has a start square
+        BoardState p1_wins(state);
+        p1_wins.erase({1, 1});
+        
+        Board p1wb("Player 1 Wins", p1_wins);
+        BOOST_TEST(false, "constructor accepted board where only one player has a start square");
     } catch (std::runtime_error& e) {}
 
 }
