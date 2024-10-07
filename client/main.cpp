@@ -3,7 +3,6 @@
 #include "raylib.h"
 
 int main(int argc, char** argv) {
-    hello();
     InitWindow(800, 400, "hello raylib cpp");
 
     while (!WindowShouldClose()) {
