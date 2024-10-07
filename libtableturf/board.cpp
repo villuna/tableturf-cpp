@@ -1,5 +1,6 @@
 #include "board.hpp"
 #include <cassert>
+#include <format>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
@@ -74,6 +75,88 @@ Board::Board(std::string name, BoardState initial_state) :
 
         this->state.insert({ coord, tile });
     }
+}
+
+std::string Board::to_fin_str() const {
+    std::string fin;
+
+    // Reasonable estimate of at most how many chars we will have
+    fin.reserve(width * height);
+
+    for (int y = 0; y < height; y++) {
+        if (y != 0)
+            fin.push_back('/');
+
+        int x = 0;
+
+        while (x < width) {
+            auto tile = state.find({x, y});
+
+            if (tile == state.end()) {
+                // Tile is empty.
+                int run_length = 0;
+                
+                do {
+                    x++;
+                    run_length++;
+                } while (x < width && state.find({x, y}) == state.end());
+
+                if (run_length > 1) {
+                    fin.append(std::format("{}", run_length));
+                }
+                fin.push_back('x');
+            } else {
+                int run_length = 0;
+                
+                do {
+                    x++;
+                    run_length++;
+
+                    if (x >= width)
+                        break;
+
+                    auto next_tile = state.find({x, y});
+
+                    if (next_tile == state.end() || next_tile->second != tile->second)
+                        break;
+                } while (true);
+
+                if (run_length > 1) {
+                    fin.append(std::format("{}", run_length));
+                }
+
+                char square_type;
+                if (!tile->second.has_value()) {
+                    square_type = 'f';
+                } else if (tile->second->is_wall) {
+                    square_type = 'w';
+                } else {
+                    assert(tile->second->owner == PLAYER_P1 || tile->second->owner == PLAYER_P2);
+
+                    if (tile->second->owner == PLAYER_P1) {
+                        if (tile->second->is_special) {
+                            square_type = 'A';
+                        } else {
+                            square_type = 'a';
+                        }
+                    } else {
+                        if (tile->second->is_special) {
+                            square_type = 'B';
+                        } else {
+                            square_type = 'b';
+                        }
+                    }
+                }
+
+                fin.push_back(square_type);
+            }
+        }
+
+    }
+
+    // Because that reserve call might have overshot, this will save some space
+    fin.shrink_to_fit();
+    return fin;
 }
 
 // TODO: Maybe replace this with a Boost.Spirit parser? But this works fine so not that necessary.

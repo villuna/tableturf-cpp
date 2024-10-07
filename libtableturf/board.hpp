@@ -3,6 +3,7 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <tuple>
 
 enum PlayerSide {
     PLAYER_NONE,
@@ -28,6 +29,11 @@ struct Tile {
         owner(owner),
         is_special(is_special)
     {}
+
+    inline friend bool operator==(const Tile& lhs, const Tile& rhs) { 
+        return std::tie(lhs.is_wall, lhs.owner, lhs.is_special) == std::tie(rhs.is_wall, rhs.owner, rhs.is_special);
+    }
+    inline friend bool operator!=(const Tile& lhs, const Tile& rhs) { return !(lhs == rhs); }
 };
 
 typedef std::map<std::pair<int, int>, std::optional<Tile>> BoardState;

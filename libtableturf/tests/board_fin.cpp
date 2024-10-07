@@ -63,6 +63,20 @@ BOOST_AUTO_TEST_CASE(test_invalid_fin_strings) {
         b = parse_fin_state("0f/x");
         BOOST_TEST(false, "didn't fail line with invalid number");
     } catch (std::exception& e) {}
+}
 
+BOOST_AUTO_TEST_CASE(test_board_to_fin) {
+
+    std::string en_poisson = "8f/8f/5fB2f/8f/8f/2fA5f/8f/8f";
+    BoardState bs = parse_fin_state(en_poisson);
+    Board b("En Poisson", bs);
+
+    BOOST_TEST(en_poisson == b.to_fin_str());
+
+    std::string lakefront_property = "16f/16f/16f/12fB3f/16f/16f/6f4x6f/6f4x6f/6f4x6f/6f4x6f/16f/16f/3fA12f/16f/16f/16f";
+    bs = parse_fin_state(lakefront_property);
+    b = Board("Lakefront Property", bs);
+
+    BOOST_TEST(lakefront_property == b.to_fin_str());
 
 }
