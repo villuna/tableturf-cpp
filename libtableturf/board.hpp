@@ -5,13 +5,29 @@
 #include <string>
 
 enum PlayerSide {
+    PLAYER_NONE,
     PLAYER_P1,
     PLAYER_P2,
 };
 
 struct Tile {
+    bool is_wall;
+
+    // These two have no meaning if the struct is a wall
     PlayerSide owner;
     bool is_special;
+
+    Tile() :
+        is_wall(true),
+        owner(PLAYER_NONE),
+        is_special(true)
+    {}
+
+    Tile(PlayerSide owner, bool is_special) :
+        is_wall(false),
+        owner(owner),
+        is_special(is_special)
+    {}
 };
 
 typedef std::map<std::pair<int, int>, std::optional<Tile>> BoardState;
@@ -27,7 +43,8 @@ typedef std::map<std::pair<int, int>, std::optional<Tile>> BoardState;
 // The different square types are:
 //
 // - 'f': a free square, where something could be placed but is empty.
-// - 'x': an empty square, or wall, where nothing can be placed.
+// - 'w': a wall, which visually looks like a tile but where nothing can be placed.
+// - 'x': an empty square, where nothing can be placed.
 // - 'a'/'A': a tile belonging to player 1. Capitals denote special squares.
 // - 'b'/'B': a tile belonging to player 2. "        "      "       "
 //
@@ -92,8 +109,11 @@ public:
     Board(std::string name, BoardState initial_state);
     Board(std::string name, const std::string& fin_state);
 
-    const std::string& getName() const { return name; }
-    const int getWidth() const { return width; }
-    const int getHeight() const { return height; }
-    const BoardState& getBoardState() const { return state; }
+    const std::string& get_name() const { return name; }
+    const int get_width() const { return width; }
+    const int get_height() const { return height; }
+    const BoardState& get_board_state() const { return state; }
+
+    // Generate a fin representation of the board
+    std::string to_fin_str() const;
 };

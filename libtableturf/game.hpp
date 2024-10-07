@@ -14,12 +14,13 @@ public:
 class Match {
     Board board;
     PlayerState p1, p2;
-    int turns_left = 0;
+    int turns_left;
 
 public:
     Match(Board initial_board, PlayerState p1, PlayerState p2) :
         board(initial_board),
         p1(p1),
-        p2(p2)
+        p2(p2),
+        turns_left(15)
     {}
 };

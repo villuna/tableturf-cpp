@@ -122,10 +122,7 @@ BoardState parse_fin_state(std::string fin_str) {
 
                     bool is_special = c == 'A' || c == 'B';
 
-                    Tile t = {
-                        .owner = side,
-                        .is_special = is_special,
-                    };
+                    Tile t(side, is_special);
 
                     for (int i = 0; i < num_squares; i++) {
                         state.insert({{x, y}, t});
@@ -135,6 +132,11 @@ BoardState parse_fin_state(std::string fin_str) {
                     // Free spaces: insert them into the map but with no tile placed on them
                     for (int i = 0; i < num_squares; i++) {
                         state.insert({{x, y}, std::nullopt});
+                        x++;
+                    }
+                } else if (c == 'w') {
+                    for (int i = 0; i < num_squares; i++) {
+                        state.insert({{x, y}, Tile()});
                         x++;
                     }
                 } else if (c == 'x') {

@@ -10,11 +10,11 @@ BOOST_AUTO_TEST_CASE(test_fin_boards_valid) {
 
     Board ep = Board("En Poisson", parse_fin_state(en_poisson));
 
-    BOOST_TEST(ep.getWidth() == 8);
-    BOOST_TEST(ep.getHeight() == 8);
+    BOOST_TEST(ep.get_width() == 8);
+    BOOST_TEST(ep.get_height() == 8);
 
-    std::optional<Tile> first_empty = ep.getBoardState().at({0, 0});
-    std::optional<Tile> p2_start = ep.getBoardState().at({5, 2});
+    std::optional<Tile> first_empty = ep.get_board_state().at({0, 0});
+    std::optional<Tile> p2_start = ep.get_board_state().at({5, 2});
 
     BOOST_TEST(!first_empty.has_value());
     BOOST_TEST(p2_start.has_value());
@@ -23,14 +23,14 @@ BOOST_AUTO_TEST_CASE(test_fin_boards_valid) {
 
     Board lp = Board("Lakefront Property", parse_fin_state(lakefront_property));
 
-    BOOST_TEST(lp.getWidth() == 16);
-    BOOST_TEST(lp.getHeight() == 16);
+    BOOST_TEST(lp.get_width() == 16);
+    BOOST_TEST(lp.get_height() == 16);
 
     // Make sure it doesn't contain the empty square in the middle
-    BOOST_TEST(!lp.getBoardState().contains({6, 6}));
+    BOOST_TEST(!lp.get_board_state().contains({6, 6}));
 
-    first_empty = lp.getBoardState().at({0, 0});
-    p2_start = lp.getBoardState().at({12, 3});
+    first_empty = lp.get_board_state().at({0, 0});
+    p2_start = lp.get_board_state().at({12, 3});
 
     BOOST_TEST(!first_empty.has_value());
     BOOST_TEST(p2_start.has_value());
