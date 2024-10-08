@@ -78,5 +78,4 @@ BOOST_AUTO_TEST_CASE(test_board_to_fin) {
     b = Board("Lakefront Property", bs);
 
     BOOST_TEST(lakefront_property == b.to_fin_str());
-
 }

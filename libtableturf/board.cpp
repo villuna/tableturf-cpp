@@ -31,10 +31,6 @@ Board::Board(std::string name, BoardState initial_state) :
         std::pair<int, int> coord = i->first;
         std::optional<Tile> tile = i->second;
 
-        if (coord.first < 0 || coord.second < 0) {
-            throw std::runtime_error("Invalid board: coordinates cannot be negative");
-        }
-
         // Figure out the bounding box of the board by finding what the min and max x and y values are
         if (!min_x || coord.first < *min_x)
             min_x = coord.first;
