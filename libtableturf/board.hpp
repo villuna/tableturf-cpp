@@ -36,7 +36,23 @@ struct Tile {
     inline friend bool operator!=(const Tile& lhs, const Tile& rhs) { return !(lhs == rhs); }
 };
 
-typedef std::map<std::pair<int, int>, std::optional<Tile>> BoardState;
+struct Coord {
+    int x;
+    int y;
+
+public:
+    Coord() : x(0), y(0) {}
+    Coord(int x, int y) : x(x), y(y) {}
+
+    inline friend bool operator<(const Coord& lhs, const Coord& rhs) { 
+        return std::tie(lhs.x, lhs.y) < std::tie(rhs.x, rhs.y);
+    }
+    inline friend bool operator>(const Coord& lhs, const Coord& rhs) { return rhs < lhs; }
+    inline friend bool operator<=(const Coord& lhs, const Coord& rhs) { return !(lhs > rhs); }
+    inline friend bool operator>=(const Coord& lhs, const Coord& rhs) { return !(lhs < rhs); } 
+};
+
+typedef std::map<Coord, std::optional<Tile>> BoardState;
 
 // Parses a board state in FIN encoding.
 // FIN, or Fishyth-Ika notation, is an encoding scheme devised by Tacchios Fishyth and Veron Ika

@@ -28,19 +28,19 @@ Board::Board(std::string name, BoardState initial_state) :
     // i.e., we need to make sure that the min x and y values are both 0. This will help us with
     // actually dealing with coordinates later on.
     for (auto i = initial_state.begin(); i != initial_state.end(); i++) {
-        std::pair<int, int> coord = i->first;
+        Coord coord = i->first;
         std::optional<Tile> tile = i->second;
 
         // Figure out the bounding box of the board by finding what the min and max x and y values are
-        if (!min_x || coord.first < *min_x)
-            min_x = coord.first;
-        if (!max_x || coord.first > *max_x)
-            max_x = coord.first;
+        if (!min_x || coord.x < *min_x)
+            min_x = coord.x;
+        if (!max_x || coord.x > *max_x)
+            max_x = coord.x;
 
-        if (!min_y || coord.second < *min_y)
-            min_y = coord.second;
-        if (!max_y || coord.second> *max_y)
-            max_y = coord.second;
+        if (!min_y || coord.y < *min_y)
+            min_y = coord.y;
+        if (!max_y || coord.y> *max_y)
+            max_y = coord.y;
 
         // Ensure that the p1 and p2 both actually have somewhere to start
         if (tile) {
@@ -63,11 +63,11 @@ Board::Board(std::string name, BoardState initial_state) :
 
     for (auto i = initial_state.begin(); i != initial_state.end(); i++) {
         // normalise coordinates
-        std::pair<int, int> coord = i->first;
+        Coord coord = i->first;
         std::optional<Tile> tile = i->second;
 
-        coord.first -= *min_x;
-        coord.second -= *min_y;
+        coord.x -= *min_x;
+        coord.y -= *min_y;
 
         this->state.insert({ coord, tile });
     }
@@ -86,7 +86,7 @@ std::string Board::to_fin_str() const {
         int x = 0;
 
         while (x < width) {
-            auto tile = state.find({x, y});
+            auto tile = state.find(Coord(x, y));
 
             if (tile == state.end()) {
                 // Tile is empty.
@@ -95,7 +95,7 @@ std::string Board::to_fin_str() const {
                 do {
                     x++;
                     run_length++;
-                } while (x < width && state.find({x, y}) == state.end());
+                } while (x < width && state.find(Coord(x, y)) == state.end());
 
                 if (run_length > 1) {
                     fin.append(std::format("{}", run_length));
@@ -111,7 +111,7 @@ std::string Board::to_fin_str() const {
                     if (x >= width)
                         break;
 
-                    auto next_tile = state.find({x, y});
+                    auto next_tile = state.find(Coord(x, y));
 
                     if (next_tile == state.end() || next_tile->second != tile->second)
                         break;
@@ -204,18 +204,18 @@ BoardState parse_fin_state(std::string fin_str) {
                     Tile t(side, is_special);
 
                     for (int i = 0; i < num_squares; i++) {
-                        state.insert({{x, y}, t});
+                        state.insert({Coord(x, y), t});
                         x++;
                     }
                 } else if (c == 'f') {
                     // Free spaces: insert them into the map but with no tile placed on them
                     for (int i = 0; i < num_squares; i++) {
-                        state.insert({{x, y}, std::nullopt});
+                        state.insert({Coord(x, y), std::nullopt});
                         x++;
                     }
                 } else if (c == 'w') {
                     for (int i = 0; i < num_squares; i++) {
-                        state.insert({{x, y}, Tile()});
+                        state.insert({Coord(x, y), Tile()});
                         x++;
                     }
                 } else if (c == 'x') {
