@@ -2,7 +2,7 @@
     {
         "name": "Splattershot Jr.",
         "id": 3,
-        "cost": 2,
+        "special_cost": 2,
         "tiles": [
             { "coord": [2, 3], "special": false},
             { "coord": [3, 3], "special": true},
@@ -14,7 +14,7 @@
     {
         "name": "Tri-Stringer",
         "id": 52,
-        "cost": 4,
+        "special_cost": 4,
         "tiles": [
             { "coord" : [1, 1], "special": false },
             { "coord" : [2, 1], "special": true },
