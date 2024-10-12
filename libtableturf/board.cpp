@@ -1,6 +1,5 @@
 #include "board.hpp"
 #include <cassert>
-#include <format>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
@@ -98,7 +97,7 @@ std::string Board::to_fin_str() const {
                 } while (x < width && state.find(Coord(x, y)) == state.end());
 
                 if (run_length > 1) {
-                    fin.append(std::format("{}", run_length));
+                    fin.append(std::to_string(run_length));
                 }
                 fin.push_back('x');
             } else {
@@ -118,7 +117,7 @@ std::string Board::to_fin_str() const {
                 } while (true);
 
                 if (run_length > 1) {
-                    fin.append(std::format("{}", run_length));
+                    fin.append(std::to_string(run_length));
                 }
 
                 char square_type;

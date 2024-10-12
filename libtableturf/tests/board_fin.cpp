@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(test_fin_boards_valid) {
     BOOST_TEST(lp.get_height() == 16);
 
     // Make sure it doesn't contain the empty square in the middle
-    BOOST_TEST(!lp.get_board_state().contains({6, 6}));
+    BOOST_TEST((lp.get_board_state().find({6, 6}) == lp.get_board_state().end()), "board contains square that should be empty");
 
     first_empty = lp.get_board_state().at({0, 0});
     p2_start = lp.get_board_state().at({12, 3});

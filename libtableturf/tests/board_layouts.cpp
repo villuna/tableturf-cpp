@@ -15,9 +15,10 @@ BOOST_AUTO_TEST_CASE(test_boards) {
     };
 
     Board b1("Four Square", state);
+    auto b1m = b1.get_board_state();
 
-    BOOST_TEST(b1.get_board_state().contains({0, 0}), "board doesnt contain correct coordinates");
-    BOOST_TEST(b1.get_board_state().contains({1, 1}), "board doesnt contain correct coordinates");
+    BOOST_TEST((b1m.find({0, 0}) != b1m.end()), "board doesnt contain correct coordinates");
+    BOOST_TEST((b1m.find({1, 1}) != b1m.end()), "board doesnt contain correct coordinates");
 
     std::optional<Tile> p1_tile = b1.get_board_state().at({0, 0});
 
@@ -79,10 +80,12 @@ BOOST_AUTO_TEST_CASE(test_board_normalisation) {
     for (const Board& b : boards) {
         // Check they contain the same keys
         for (auto tile = b.get_board_state().begin(); tile != b.get_board_state().end(); tile++) {
-            BOOST_TEST(main_board.get_board_state().contains(tile->first));
+            auto m = main_board.get_board_state();
+            BOOST_TEST((m.find(tile->first) != m.end()), "board coordinate normalisation failed");
         }
         for (auto tile = main_board.get_board_state().begin(); tile != main_board.get_board_state().end(); tile++) {
-            BOOST_TEST(b.get_board_state().contains(tile->first));
+            auto m = b.get_board_state();
+            BOOST_TEST((m.find(tile->first) != m.end()), "board coordinate normalisation failed");
         }
     }
 }

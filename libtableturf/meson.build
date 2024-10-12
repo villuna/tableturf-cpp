@@ -1,11 +1,11 @@
-yaml_cpp = subproject('yaml_cpp')
-yaml_cpp_dep = yaml_cpp.get_variable('yaml_cpp_dep')
+json = subproject('json')
+json_dep = json.get_variable('nlohmann_json_dep')
 
 libtableturf_include = include_directories('.')
 libtableturf = library('libtableturf',
-  sources: ['board.cpp', 'board.hpp', 'game.hpp', 'game.cpp', 'card.hpp', 'card.cpp', 'yaml_conversions.cpp', 'yaml_conversions.hpp'],
+  sources: ['board.cpp', 'board.hpp', 'game.hpp', 'game.cpp', 'card.hpp', 'card.cpp', 'json.cpp', 'json.hpp'],
   include_directories: [libtableturf_include],
-  dependencies: [boost_dep, yaml_cpp_dep])
+  dependencies: [boost_dep, json_dep])
 
 libtableturf_dep = declare_dependency(
   include_directories: libtableturf_include,
@@ -13,9 +13,9 @@ libtableturf_dep = declare_dependency(
 
 # unit tests
 
-tests = ['board_layouts', 'board_fin', 'card_yaml']
+tests = ['board_layouts', 'board_fin', 'card_json']
 
 foreach t : tests
-  e = executable(t, 'tests' / (t + '.cpp'), dependencies: [libtableturf_dep, boost_dep, yaml_cpp_dep])
+  e = executable(t, 'tests' / (t + '.cpp'), dependencies: [libtableturf_dep, boost_dep, json_dep])
   test(t, e)
 endforeach

@@ -1,12 +1,14 @@
 #pragma once
 
 #include <string>
+#include <array>
 #include "board.hpp"
+#include "card.hpp"
 
 // Describes the state of a player in the match.
 class PlayerState {
     std::string name;
-    // TODO: hand
+    std::array<CardId, 15> deck;
 
 public:
     PlayerState(std::string name) : name(name) {}

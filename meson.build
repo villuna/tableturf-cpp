@@ -1,5 +1,5 @@
 project('tableturf', 'cpp', 
-  default_options : ['cpp_std=c++23', 'default_library=static'])
+  default_options : ['cpp_std=c++17', 'default_library=static'])
 
 boost_dep = dependency('boost')
 

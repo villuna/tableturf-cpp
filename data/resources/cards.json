@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Splattershot Jr.",
+        "id": 3,
+        "cost": 2,
+        "tiles": [
+            { "coord": [2, 3], "special": false},
+            { "coord": [3, 3], "special": true},
+            { "coord": [4, 3], "special": false},
+            { "coord": [2, 4], "special": false}
+        ]
+    },
+
+    {
+        "name": "Tri-Stringer",
+        "id": 52,
+        "cost": 4,
+        "tiles": [
+            { "coord" : [1, 1], "special": false },
+            { "coord" : [2, 1], "special": true },
+            { "coord" : [3, 1], "special": false },
+            { "coord" : [4, 1], "special": false },
+            { "coord" : [5, 1], "special": false },
+            { "coord" : [1, 2], "special": false },
+            { "coord" : [3, 2], "special": false },
+            { "coord" : [1, 3], "special": false },
+            { "coord" : [2, 3], "special": false },
+            { "coord" : [1, 4], "special": false },
+            { "coord" : [1, 5], "special": false }
+        ]
+    }
+]
