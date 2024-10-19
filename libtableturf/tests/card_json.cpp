@@ -24,7 +24,6 @@ BOOST_AUTO_TEST_CASE(json_decode) {
     })";
 
     json spshjr_json = json::parse(spshjr);
-    std::cout << spshjr_json.dump() << std::endl;
     Card spshjr_card = spshjr_json;
 
     BOOST_TEST(spshjr_card.name == "Splattershot Jr.");
