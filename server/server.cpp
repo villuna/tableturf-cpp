@@ -53,10 +53,18 @@ void ClientConnection::queue_send_message(ServerMessage msg) {
 }
 
 void ClientConnection::start_recv_message() {
-    asio::async_read_until(socket, m_read_buffer, '\n',
-            boost::bind(&ClientConnection::handle_recv, shared_from_this(),
-            asio::placeholders::error,
-            asio::placeholders::bytes_transferred));
+    asio::async_read_until(
+        socket,
+        m_read_buffer,
+        '\n',
+        asio::bind_executor(m_strand,
+            boost::bind(&ClientConnection::handle_recv, 
+                shared_from_this(),
+                asio::placeholders::error,
+                asio::placeholders::bytes_transferred
+            )
+        )
+    );
 }
 
 void ClientConnection::handle_send(const error_code& e) {
@@ -75,9 +83,16 @@ void ClientConnection::handle_send(const error_code& e) {
 void ClientConnection::send_message(std::string message) {
     m_write_buffer = message;
 
-    asio::async_write(socket, asio::buffer(m_write_buffer),
-            boost::bind(&ClientConnection::handle_send, shared_from_this(),
-            asio::placeholders::error));
+    asio::async_write(
+        socket,
+        asio::buffer(m_write_buffer),
+        asio::bind_executor(m_strand,
+            boost::bind(&ClientConnection::handle_send, 
+                shared_from_this(),
+                asio::placeholders::error
+            )
+        )
+    );
 }
 
 void ClientConnection::handle_recv(const error_code& e, size_t bytes_transferred) {

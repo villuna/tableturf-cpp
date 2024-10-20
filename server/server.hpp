@@ -18,12 +18,14 @@ using boost::system::error_code;
 //
 // This model is the same as in the Boost.Asio async tcp server tutorial.
 class ClientConnection : public std::enable_shared_from_this<ClientConnection> {
+    asio::strand<asio::io_context::executor_type> m_strand;
+
     asio::streambuf m_read_buffer;
 
     std::string m_write_buffer;
     std::queue<std::string> m_write_queue;
 
-    ClientConnection(asio::io_context& ctx) : socket(ctx) {}
+    ClientConnection(asio::io_context& ctx) : m_strand(asio::make_strand(ctx)), socket(ctx) {}
 
     void queue_send_message(ServerMessage msg);
     void send_message(std::string message);
