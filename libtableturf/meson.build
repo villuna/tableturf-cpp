@@ -4,11 +4,11 @@ json_dep = json.get_variable('nlohmann_json_dep')
 libtableturf_include = include_directories('.')
 libtableturf = library('libtableturf',
   sources: [
-    'board.cpp', 'board.hpp',
-    'game.cpp', 'game.hpp',
-    'card.cpp', 'card.hpp',
-    'json.cpp', 'json.hpp',
-    'protocol.cpp', 'protocol.hpp',
+    'board.cpp',
+    'game.cpp',
+    'card.cpp',
+    'json.cpp',
+    'protocol.cpp',
   ],
   include_directories: [libtableturf_include],
   dependencies: [boost_dep, json_dep])
