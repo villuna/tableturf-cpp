@@ -42,20 +42,18 @@ void ClientConnection::start() {
 }
 
 void ClientConnection::queue_send_message(ServerMessage msg) {
-    std::string msg_string = server_message_to_json(msg);
-    msg_string.push_back('\n');
+    m_write_queue.push(msg);
 
-    if (m_write_queue.empty()) {
-        send_message(msg_string);
-    } else {
-        m_write_queue.push(msg_string);
+    if (!m_sending) {
+        m_sending = true;
+        send_next_message();
     }
 }
 
 void ClientConnection::start_recv_message() {
     asio::async_read_until(
         socket,
-        m_read_buffer,
+        asio::dynamic_buffer(m_read_buffer),
         '\n',
         asio::bind_executor(m_strand,
             boost::bind(&ClientConnection::handle_recv, 
@@ -69,45 +67,46 @@ void ClientConnection::start_recv_message() {
 
 void ClientConnection::handle_send(const error_code& e) {
     if (e) {
-        std::cerr << "Error occured: " << e.what() << std::endl;
+        std::cerr << "Error sending message: " << e.what() << std::endl;
+        disconnect();
+    } else if (!m_write_queue.empty()) {
+        send_next_message();
     } else {
-        if (!m_write_queue.empty()) {
-            std::string next_message = m_write_queue.front();
-            m_write_queue.pop();
-
-            send_message(next_message);
-        }
+        m_sending = false;
     }
 }
 
-void ClientConnection::send_message(std::string message) {
-    m_write_buffer = message;
+void ClientConnection::send_next_message() {
+    if (!m_write_queue.empty()) {
+        ServerMessage msg = m_write_queue.front();
+        m_write_queue.pop();
 
-    asio::async_write(
-        socket,
-        asio::buffer(m_write_buffer),
-        asio::bind_executor(m_strand,
-            boost::bind(&ClientConnection::handle_send, 
-                shared_from_this(),
-                asio::placeholders::error
+        m_write_buffer = server_message_to_json(msg);
+        m_write_buffer.push_back('\n');
+
+        asio::async_write(
+            socket,
+            asio::buffer(m_write_buffer),
+            asio::bind_executor(m_strand,
+                boost::bind(&ClientConnection::handle_send, 
+                    shared_from_this(),
+                    asio::placeholders::error
+                )
             )
-        )
-    );
+        );
+    }
 }
 
 void ClientConnection::handle_recv(const error_code& e, size_t bytes_transferred) {
     if (e) {
         std::cerr << "Error recieving client message: " << e.what() << std::endl;
+        disconnect();
         return;
     }
 
-    std::stringstream strstrm;
-    strstrm << &m_read_buffer;
-
-    std::string line;
-    // This will let us get rid of the newline
-    std::getline(strstrm, line);
+    std::string line = m_read_buffer.substr(0, bytes_transferred);
     std::cout << "Recieved line: " << line << std::endl;
+    m_read_buffer.erase(0, bytes_transferred);
 
     try {
         ClientMessage c = client_message_from_json(line);
@@ -128,4 +127,8 @@ void ClientConnection::handle_client_message(ClientMessage msg) {
 
         queue_send_message(HelloClient {});
     }
+}
+
+void ClientConnection::disconnect() {
+    socket.close();
 }

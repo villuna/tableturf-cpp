@@ -1,57 +1,45 @@
-#include <exception>
 #include <iostream>
 #include <print>
-#include "channel.hpp"
 #include "client.hpp"
 #include "protocol.hpp"
 #include "raylib.h"
 #include <boost/asio.hpp>
-#include <thread>
+#include <deque>
 
 namespace asio = boost::asio;
 
 int main(int argc, char** argv) {
     asio::io_context ctx;
-    auto chan = channel<ServerMessage>();
-    Reciever<ServerMessage> rx = chan.first;
-    Client c(chan.second, ctx);
-
-    // Use this thread to run async read and write operations to the server so that the main thread
-    // can handle running the game
-    //std::thread async_thread = std::thread([&ctx]() {
-    //    try {
-    //        ctx.run(); 
-    //    } catch (const std::exception& e) {
-    //        std::cerr << "Error running async context: " << e.what() << std::endl;
-    //    }
-    //});
+    std::deque<ServerMessage> messages;
+    Client c(messages, ctx);
 
     InitWindow(800, 400, "hello raylib cpp");
+    SetTargetFPS(60);
 
-    double target_fps = 60.0;
-    int frame_micros = static_cast<int>((1.0 / target_fps) * 1000000.0);
-    asio::steady_timer frame_timer(ctx, std::chrono::microseconds(frame_micros));
-
+    std::string instructions = "C to connect. D to disconnect. S to send.";
+    std::string status = "Disconnected";
+    std::string recieved = "";
+    
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_C)) {
-            bool online = c.connect();
-
-            if (!online) {
-                std::cout << "Connecting now..." << std::endl;
-            } else {
-                std::cout << "Was already online, hold ya horses" << std::endl;
-            }
+            c.connect();
+        } else if (IsKeyPressed(KEY_D)) {
+            c.disconnect();
+        } else if (IsKeyPressed(KEY_S)) {
+            c.queue_send(HelloServer { .info = PublicPlayerInfo { .name = "villuna" }});
         }
 
-        if (IsKeyPressed(KEY_S)) {
-            // This is probably a bad idea and i'll like set up a messag equeue in a bit
-            c.send_message(HelloServer { .info = PublicPlayerInfo { .name = "villuna" }});
+        if (c.is_online()) {
+            status = "Connected"; 
+        } else {
+            status = "Disconnected";
+            recieved = "";
         }
 
-        std::optional<ServerMessage> msg = rx.recv();
-
-        if (msg.has_value()) {
-            std::cout << "Recieved!: " << server_message_to_json(*msg) << std::endl;
+        if (!messages.empty()) {
+            ServerMessage msg = messages.front();
+            messages.pop_front();
+            recieved = "Recieved!: " + server_message_to_json(msg);
         }
 
         BeginDrawing();
@@ -59,14 +47,16 @@ int main(int argc, char** argv) {
         ClearBackground(RAYWHITE);
         DrawFPS(10, 10);
 
-        DrawText("Press C to connect to the server!", 200, 200, 20, LIGHTGRAY);
+        DrawText(instructions.c_str(), 200, 200, 20, LIGHTGRAY);
+        DrawText(status.c_str(), 200, 250, 20, LIGHTGRAY);
+        DrawText(recieved.c_str(), 200, 300, 20, LIGHTGRAY);
 
         EndDrawing();
 
+        // We run the async context at the end of every frame
+        // this way we can have our event loops for both the game and the network, on the one thread
         ctx.poll();
         ctx.restart();
-        frame_timer.wait();
-        frame_timer.expires_at(frame_timer.expiry() + std::chrono::microseconds(frame_micros));
     }
 
     ctx.stop();
