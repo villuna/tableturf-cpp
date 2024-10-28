@@ -1,6 +1,3 @@
-json = subproject('json')
-json_dep = json.get_variable('nlohmann_json_dep')
-
 libtableturf_include = include_directories('.')
 libtableturf = library('libtableturf',
   sources: [
