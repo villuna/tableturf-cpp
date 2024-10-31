@@ -29,8 +29,10 @@ class Client {
     std::string m_read_buffer;
     std::string m_write_buffer;
 
-    // Indicates if the client is either trying to connect to the server or if it is already connected
+    // True if the client is either trying to connect to the server or if it is already connected
     bool m_online;
+    // True if the client is connected to the server.
+    bool m_connected;
     
     void handle_resolve(const error_code& e, tcp::resolver::results_type result);
     void handle_connect(const error_code& e, const tcp::endpoint& endpoint);
@@ -43,12 +45,14 @@ public:
         m_resolver(ctx),
         m_socket(ctx),
         m_in_messages(queue),
-        m_online(false)
+        m_online(false),
+        m_connected(false)
     {}
 
     void connect();
     void disconnect();
     bool is_online() { return m_online; }
+    bool is_connected() { return m_connected; }
     // Queues a message to be send to the server.
     //
     // As implied by the name, the send isn't necessarily done straight away. If we are already

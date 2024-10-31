@@ -16,7 +16,6 @@ void Client::connect() {
 
 void Client::disconnect() {
     if (m_online) {
-        std::cout << "trying to disconnect from the server" << std::endl;
         m_resolver.cancel();
         m_socket.close();
 
@@ -26,6 +25,7 @@ void Client::disconnect() {
         m_read_buffer.clear();
         m_write_buffer.clear();
         m_online = false;
+        m_connected = false;
     }
 }
 
@@ -33,7 +33,6 @@ void Client::handle_resolve(const error_code& e, tcp::resolver::results_type res
     std::cout << "Resolve has finished" << std::endl;
     if (e) {
         std::cerr << "Error while resolving server address: " << e.what() << std::endl;
-        m_online = false;
         return;
     }
 
@@ -45,20 +44,21 @@ void Client::handle_connect(const error_code& e, const tcp::endpoint& endpoint) 
     std::cout << "Connect has finished" << std::endl;
     if (e) {
         std::cerr << "Error while connecting to server: " << e.what() << std::endl;
-        m_online = false;
-        return;
-    }
+        disconnect();
+    } else {
+        m_connected = true;
 
-    asio::async_read_until(m_socket, asio::dynamic_buffer(m_read_buffer), '\n', 
-            boost::bind(&Client::handle_read, this, asio::placeholders::error, asio::placeholders::bytes_transferred));
+        asio::async_read_until(m_socket, asio::dynamic_buffer(m_read_buffer), '\n', 
+                boost::bind(&Client::handle_read, this, asio::placeholders::error, asio::placeholders::bytes_transferred));
+    }
 }
 
 void Client::handle_read(const error_code& e, size_t bytes_read) {
     std::cout << "Read has finished" << std::endl;
     if (e) {
         std::cerr << "Error while reading from server: " << e.what() << std::endl;
-        m_socket.close();
-        m_online = false;
+        disconnect();
+
         return;
     }
 
@@ -113,7 +113,7 @@ void Client::send_next_message() {
 
 void Client::handle_send(const error_code& e) {
     if (e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error sending message to server: " << e.what() << std::endl;
         disconnect();
         return;
     } else if (!m_out_messages.empty()) {
