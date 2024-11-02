@@ -2,12 +2,13 @@
 #include "game.hpp"
 #include "protocol.hpp"
 #include "raylib.h"
-#include "ui/button.hpp"
+#include "ui/ui.hpp"
 #include <iostream>
 
 Lobby::Lobby(Game& parent) :
    GameState { parent },
-   button_back(20, parent.config.window_size.second - 50 - BUTTON_VPADDING, "<- Back", 30)
+   button_back(20, parent.config.window_size.second - 50 - BUTTON_VPADDING, "<- Back", 30),
+   name_box(100, 100, 10, 50)
 {
     parent.client.connect();
 }
@@ -18,15 +19,16 @@ Lobby::~Lobby() {
 }
 
 StateTransition Lobby::update() {
+    name_box.update();
+
     if (button_back.is_clicked()) {
         return trans::Pop {};
     }
 
-    if (parent.client.is_connected()) {
-        if (!sent_hello) {
-            parent.client.queue_send(HelloServer { .info = PublicPlayerInfo { .name = "villuna" }});
-            sent_hello = true;
-        }
+    if (IsKeyPressed(KEY_ENTER) && !name_box.get_contents().empty() && parent.client.is_connected()) {
+        parent.client.queue_send(HelloServer {
+            .info = PublicPlayerInfo { .name = name_box.get_contents() }
+        });
     }
 
     if (!parent.messages.empty()) {
@@ -53,8 +55,11 @@ void Lobby::draw() {
         colour = RED;
     }
 
-    DrawText(message, 100, 100, 40, colour);
-    DrawText(server_msg.c_str(), 100, 200, 40, DARKGRAY);
+    name_box.draw();
+
+    DrawText("Enter your name and press enter", 100, 200, 40, DARKGRAY);
+    DrawText(message, 100, 300, 40, colour);
+    DrawText(server_msg.c_str(), 100, 400, 40, DARKGRAY);
 
     button_back.draw();
 }

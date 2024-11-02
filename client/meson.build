@@ -10,6 +10,7 @@ executable('tableturf',
     'game.cpp',
 
     'ui/button.cpp',
+    'ui/textbox.cpp',
 
     'states/main_menu.cpp',
     'states/info.cpp',

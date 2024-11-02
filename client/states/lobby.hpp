@@ -1,9 +1,10 @@
 #pragma once
 #include "../game.hpp"
-#include "../ui/button.hpp"
+#include "../ui/ui.hpp"
 
 class Lobby : public GameState {
     Button button_back;
+    TextBox name_box;
     std::string server_msg;
     bool sent_hello { false };
 
