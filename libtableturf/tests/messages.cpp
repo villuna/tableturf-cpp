@@ -10,7 +10,7 @@ BOOST_AUTO_TEST_CASE(client_message) {
     std::cout << __LINE__ << std::endl;
     std::string json = client_message_to_json(m);
     std::cout << __LINE__ << std::endl;
-    std::string expected = "{\"info\":{\"name\":\"villuna\"},\"type\":\"" + std::to_string(CL_HELLO_SERVER) + "\"}";
+    std::string expected = "{\"info\":{\"name\":\"villuna\"},\"type\":\"hello_server\"}";
 
     BOOST_TEST(json == expected);
 
@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(client_message) {
 BOOST_AUTO_TEST_CASE(server_message) {
     ServerMessage m = HelloClient {};
     std::string json = server_message_to_json(m);
-    std::string expected = "{\"type\":\"" + std::to_string(CL_HELLO_SERVER) + "\"}";
+    std::string expected = "{\"type\":\"hello_client\"}";
 
     BOOST_TEST(json == expected);
 

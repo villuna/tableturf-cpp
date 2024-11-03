@@ -35,7 +35,7 @@ void TextBox::update() {
     
     // GetCharPressed is stateful and will return a code > 0 while
     // there are more keypresses to process
-    for (int key = GetCharPressed(); (key > 0 && contents.length() < char_limit); key = GetCharPressed()) {
+    for (int key = GetCharPressed(); (key > 0 && (int)contents.length() < char_limit); key = GetCharPressed()) {
         // only allow printable ascii
         // i know i probably should support japanese input but bro i'm not even sure if raylib supports japanese input
         if (key >= 32 && key <= 126) {
@@ -52,7 +52,7 @@ void TextBox::update() {
 void TextBox::draw() {
     DrawRectangleRec(bounds, TEXTBOX_DEFAULT_COLOUR);
 
-    bool draw_underscore = contents.length() < char_limit;
+    bool draw_underscore = (int)contents.length() < char_limit;
 
     if (draw_underscore)
         contents.push_back('_');

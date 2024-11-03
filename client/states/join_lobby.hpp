@@ -2,12 +2,13 @@
 #include "../game.hpp"
 #include "../ui/ui.hpp"
 
-class Lobby : public GameState {
+class JoinLobby : public GameState {
     Button button_back;
-    Button button_find_game;
+    TextBox name_box;
+    bool sent_hello { false };
 
 public:
-    Lobby(Game& parent);
+    JoinLobby(Game& parent);
 
     StateTransition update() override;
     void draw() override;

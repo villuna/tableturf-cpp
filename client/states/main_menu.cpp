@@ -1,6 +1,6 @@
 #include "main_menu.hpp"
 #include "states/info.hpp"
-#include "states/lobby.hpp"
+#include "states/join_lobby.hpp"
 #include <memory>
 
 const int TITLE_FONT_SIZE = 70;
@@ -27,7 +27,7 @@ StateTransition MainMenu::update() {
     if (button_exit.is_clicked()) {
         return trans::Exit{};
     } else if (button_multi.is_clicked()) {
-        return trans::Push { .state = std::make_unique<Lobby>(parent) };
+        return trans::Push { .state = std::make_unique<JoinLobby>(parent) };
     } else if (button_info.is_clicked()) {
         return trans::Push { .state = std::make_unique<Info>(parent) };
     }

@@ -3,26 +3,9 @@
 #include <string>
 #include <variant>
 
-// An enum which indicates the type of a client message. These tags will be used to externally tag
-// the type of a message when encoded with json. If you want to remove one, try to mark its tag as
-// deprecated so we don't reuse the same integer tag for different messages. This way if the server
-// and client are different versions then there won't be weird mismatches.
-//
-// Is this way overengineered for this pet project? Of course. But writing good code is its own reward.
-enum ClientMessageType {
-    CL_HELLO_SERVER = 0,
-};
+// -- Client messages --
 
-enum ServerMessageType {
-    SV_HELLO_CLIENT = 0,
-};
-
-// Message types: See their documentation in my notion notes.
-// If for some reason you're reading this comment and you're not me, well. Maybe ask me to post them
-// as markdown files.
-
-// Client:
-
+// HelloServer
 struct PublicPlayerInfo {
     std::string name; 
 };
@@ -31,12 +14,17 @@ struct HelloServer {
     PublicPlayerInfo info;
 };
 
+// FindGame
+struct FindGame {};
+
 typedef std::variant<
-    HelloServer
+    HelloServer,
+    FindGame
 > ClientMessage;
 
-// Server:
+// -- Server Messages --
 
+// HelloClient
 struct HelloClient {};
 
 typedef std::variant<

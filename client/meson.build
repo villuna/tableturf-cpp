@@ -14,6 +14,7 @@ executable('tableturf',
 
     'states/main_menu.cpp',
     'states/info.cpp',
+    'states/join_lobby.cpp',
     'states/lobby.cpp',
   ],
   dependencies: [raylib_dep, libtableturf_dep, json_dep])
