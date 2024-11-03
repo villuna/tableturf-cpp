@@ -4,18 +4,11 @@ A recreation of tableturf from splatoon 3. This is a project I'm starting to lea
 
 ## Building
 
-Note this program is still completely unfinished so the results might be underwhelming. But this is how you build it anyway!
+This program is still unfinished, so the results might be underwhelming. But this is how you build it anyway!
 
-First you have to clone this repository, then clone the submodules so that you van build raylib:
+To download, you'll have to clone this repository (or just download the source code). You will also need to install the C++ [Boost](https://www.boost.org/) libraries. This is easy on linux and a bit annoying on windows (sorry).
 
-```bash
-git clone https://github.com/villuna/tableturf-cpp.git tableturf
-cd tableturf
-git submodule init
-git submodule update
-```
-
-To build, we will need meson and cmake installed. You also need to install the Boost C++ library collection. Once that's done, just run:
+To build, you will also need meson and cmake installed. You also need to install the Boost C++ library collection. Once that's done, just run:
 
 ```bash
 mkdir build
@@ -26,4 +19,4 @@ meson compile -C build
 meson test -C build -v
 ```
 
-If all goes well, the client program will be at `build/client/tableturf` and the server at `build/server/tableturf-server`
+If all goes well, the client program will be at `build/client/tableturf` and the server at `build/server/tableturf-server [NUM_THREADS]`
