@@ -60,12 +60,10 @@ public:
     Client client;
 
     Game(int argc, char* argv[]);
-    // No copying and no moving. We only need one, and we need to make sure that the GameState
+    // No copying. We only need one, and we need to make sure that the GameState
     // can hold a reference to this without it being unsafe.
     Game(const Game&) = delete;
     Game& operator=(const Game& other) = delete;
-    Game(Game&&) = delete;
-    Game& operator=(Game&& other) = delete;
 
     void run();
 };

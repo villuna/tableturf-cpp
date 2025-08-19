@@ -17,10 +17,7 @@ Board::Board(std::string name, BoardState initial_state) :
         throw std::runtime_error("Invalid board: board cannot be empty");
     }
 
-    std::optional<int> min_x = std::nullopt;
-    std::optional<int> min_y = std::nullopt;
-    std::optional<int> max_x = std::nullopt;
-    std::optional<int> max_y = std::nullopt;
+    std::optional<int> min_x = std::nullopt, min_y = std::nullopt, max_x = std::nullopt, max_y = std::nullopt;
 
     // We do two passes, first to figure out the bounding box and validate the board, second to
     // actually insert the values. The reason we do this is so we can normalise the coordinates
@@ -154,7 +151,6 @@ std::string Board::to_fin_str() const {
     return fin;
 }
 
-// TODO: Maybe replace this with a Boost.Spirit parser? But this works fine so not that necessary.
 BoardState parse_fin_state(std::string fin_str) {
     // Trim space from the string just in case
     boost::trim(fin_str);

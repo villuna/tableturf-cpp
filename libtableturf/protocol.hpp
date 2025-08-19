@@ -27,8 +27,14 @@ typedef std::variant<
 // HelloClient
 struct HelloClient {};
 
+struct MatchFound {
+    PublicPlayerInfo opp_info;
+    int player_id;
+};
+
 typedef std::variant<
-    HelloClient
+    HelloClient,
+    MatchFound
 > ServerMessage;
 
 // Converts a json-encoded message string to a message variant

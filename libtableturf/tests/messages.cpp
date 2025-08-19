@@ -7,15 +7,12 @@
 
 BOOST_AUTO_TEST_CASE(client_message) {
     ClientMessage m = HelloServer { .info = PublicPlayerInfo { .name = "villuna" } };
-    std::cout << __LINE__ << std::endl;
     std::string json = client_message_to_json(m);
-    std::cout << __LINE__ << std::endl;
     std::string expected = "{\"info\":{\"name\":\"villuna\"},\"type\":\"hello_server\"}";
 
     BOOST_TEST(json == expected);
 
     ClientMessage m2 = client_message_from_json(json);
-    std::cout << __LINE__ << std::endl;
     BOOST_TEST(std::holds_alternative<HelloServer>(m2));
     BOOST_TEST(std::get<HelloServer>(m2).info.name == std::get<HelloServer>(m).info.name);
 }

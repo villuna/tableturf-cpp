@@ -14,3 +14,5 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Card, name, id, special_cost, tiles);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PublicPlayerInfo, name);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HelloServer, info);
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MatchFound, opp_info, player_id);

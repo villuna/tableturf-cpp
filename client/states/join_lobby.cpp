@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "states/lobby.hpp"
 #include "ui/ui.hpp"
+#include <iostream>
 #include <memory>
 
 JoinLobby::JoinLobby(Game& parent) :
@@ -29,11 +30,17 @@ StateTransition JoinLobby::update() {
     }
 
     if (!parent.messages.empty()) {
-        ServerMessage& msg = parent.messages.front();
+        std::cout << "Message is recieved" << std::endl;
+        ServerMessage msg = parent.messages.front();
         parent.messages.pop_front();
 
         if (std::holds_alternative<HelloClient>(msg)) {
+            std::cout << "Server said hello" << std::endl;
             return trans::Swap { std::make_unique<Lobby>(parent) };
+        } else if (std::holds_alternative<MatchFound>(msg)) {
+            std::cout << "Server said match found?" << std::endl;
+        } else {
+            std::cout << "Shouldn't happen, no" << std::endl;
         }
     }
 
