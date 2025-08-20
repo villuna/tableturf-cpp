@@ -29,7 +29,7 @@ void ClientConnection::start_recv_message() {
         socket,
         asio::dynamic_buffer(m_read_buffer),
         '\n',
-        boost::bind(&ClientConnection::handle_recv, 
+        boost::bind(&ClientConnection::handle_recv,
             shared_from_this(),
             asio::placeholders::error,
             asio::placeholders::bytes_transferred
@@ -59,7 +59,7 @@ void ClientConnection::send_next_message() {
         asio::async_write(
             socket,
             asio::buffer(m_write_buffer),
-            boost::bind(&ClientConnection::handle_send, 
+            boost::bind(&ClientConnection::handle_send,
                 shared_from_this(),
                 asio::placeholders::error
             )
@@ -87,13 +87,13 @@ void ClientConnection::handle_recv(const error_code& e, size_t bytes_transferred
         return;
     }
 
-    auto response = m_server.handle_client_message(m_id, c);
+    auto next_state = m_state->handle_message(*this, c);
 
-    if (response.has_value()) {
-        queue_send_message(*response);
+    if (next_state) {
+        m_state = std::move(*next_state);
     }
 
-    // Get ready to recieve the next client message 
+    // Get ready to recieve the next client message
     start_recv_message();
 }
 

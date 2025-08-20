@@ -1,3 +1,6 @@
+#pragma once
+
+#include "client_state.hpp"
 #include "server.hpp"
 #include <queue>
 
@@ -12,15 +15,15 @@
 class ClientConnection : public std::enable_shared_from_this<ClientConnection> {
     Server& m_server;
     ClientId m_id;
+    std::unique_ptr<ClientState> m_state;
 
     std::string m_read_buffer;
     std::string m_write_buffer;
     std::queue<ServerMessage> m_write_queue;
     bool m_sending { false };
 
-    ClientConnection(asio::io_context& ctx, Server& server, ClientId id) : m_server(server), m_id(id), socket(ctx) {}
+    ClientConnection(asio::io_context& ctx, Server& server, ClientId id) : m_server(server), m_id(id), m_state { std::make_unique<GreetingState>(server) }, socket(ctx) {}
 
-    void queue_send_message(ServerMessage msg);
     void send_next_message();
 
     void start_recv_message();
@@ -41,4 +44,5 @@ public:
     }
 
     void start();
+    void queue_send_message(ServerMessage msg);
 };

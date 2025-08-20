@@ -17,7 +17,7 @@ class ClientConnection;
 
 class Server {
     asio::io_context& m_ctx;
-    tcp::acceptor m_acceptor; 
+    tcp::acceptor m_acceptor;
 
     ClientId m_next_id { 0 };
 
@@ -28,10 +28,6 @@ class Server {
     void handle_accept(const error_code& e, std::shared_ptr<ClientConnection> connection);
 
 public:
-    // Handles a message recieved by one of the client connections (with given id). Returns the
-    // response to send to the client, if any.
-    std::optional<ServerMessage> handle_client_message(ClientId client_id, ClientMessage msg);
-
     Server(asio::io_context& ctx);
 
     // The ClientConnections need to hold a valid reference to this server object so disable
@@ -39,4 +35,3 @@ public:
     Server(const Server& other) = delete;
     Server& operator=(const Server& other) = delete;
 };
-

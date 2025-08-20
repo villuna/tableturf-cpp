@@ -18,20 +18,8 @@ Server::Server(asio::io_context& ctx) :
 void Server::accept_connection() {
     auto client = ClientConnection::make(m_ctx, *this, m_next_id++);
 
-    m_acceptor.async_accept(client->socket, 
+    m_acceptor.async_accept(client->socket,
             boost::bind(&Server::handle_accept, this, asio::placeholders::error, client));
-}
-
-std::optional<ServerMessage> Server::handle_client_message(uint64_t id, ClientMessage msg) {
-    if (std::holds_alternative<HelloServer>(msg)) {
-        HelloServer& h = std::get<HelloServer>(msg);
-
-        std::cout << "Client \"" << h.info.name << "\" said hello" << std::endl;
-
-        return HelloClient {};
-    }
-
-    return std::nullopt;
 }
 
 void Server::handle_accept(const error_code& e, std::shared_ptr<ClientConnection> connection) {
