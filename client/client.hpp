@@ -33,7 +33,7 @@ class Client {
     bool m_online;
     // True if the client is connected to the server.
     bool m_connected;
-    
+
     void handle_resolve(const error_code& e, tcp::resolver::results_type result);
     void handle_connect(const error_code& e, const tcp::endpoint& endpoint);
     void handle_read(const error_code& e, size_t bytes_read);

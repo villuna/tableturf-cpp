@@ -1,3 +1,6 @@
+// A simple generic channel implementation. Basically just a queue stored on the heap with a mutex
+// protecting it.
+
 #pragma once
 
 #include <memory>
@@ -6,9 +9,7 @@
 #include <queue>
 #include <utility>
 
-// TODO document this stuff to save myself the headache of trying to read c++ in the future
-// I just really can't today
-
+// Forward declarations
 template<typename T>
 class Sender;
 
@@ -18,6 +19,8 @@ class Reciever;
 template<typename T>
 std::pair<Reciever<T>, Sender<T>> channel();
 
+// The internal queue and lock for the channel. The sender and reciever will both have a shared
+// pointer to this structure.
 template<typename T>
 class ChannelInner {
     std::mutex m_m {};
@@ -38,6 +41,7 @@ class Reciever {
     friend std::pair<Reciever<T>, Sender<T>> channel<T>();
 
 public:
+    // Returns the next item in the channel, if any.
     std::optional<T> recv() {
         std::scoped_lock lock(m_inner->m_m);
 
@@ -59,12 +63,14 @@ class Sender {
     friend std::pair<Reciever<T>, Sender<T>> channel<T>();
 
 public:
+    // Pushes an item to the channel.
     void send(T value) {
         std::scoped_lock lock(m_inner->m_m);
         m_inner->m_queue.push(value);
     }
 };
 
+// Creates a new channel and returns a pair containing the reciever and the sender.
 template<typename T>
 std::pair<Reciever<T>, Sender<T>> channel() {
     std::shared_ptr<ChannelInner<T>> inner = std::shared_ptr<ChannelInner<T>>(new ChannelInner<T>());
